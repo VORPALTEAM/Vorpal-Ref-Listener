@@ -16,14 +16,14 @@ contract Treasury is AccessControl, EIP712 {
 
     struct TransferFundsParams {
         uint256 nonce;
-        address receiver;
         address minter;
+        address receiver;
         uint256 amount;
     }
 
     IERC20 public vorpal;
 
-    bytes32 private constant TRANSFER_FUNDS_TYPEHASH = keccak256("TransferFunds(uint256 nonce,address receiver,address minter,uint256 amount)");
+    bytes32 private constant TRANSFER_FUNDS_TYPEHASH = keccak256("TransferFunds(uint256 nonce,address minter,address receiver,uint256 amount)");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     mapping(uint256 => bool) private nonces;    
@@ -57,8 +57,8 @@ contract Treasury is AccessControl, EIP712 {
             abi.encode(
                 TRANSFER_FUNDS_TYPEHASH,
                 params.nonce,
-                params.receiver,
                 params.minter,
+                params.receiver,
                 params.amount
             )
         );

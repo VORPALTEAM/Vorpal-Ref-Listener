@@ -21,13 +21,17 @@ async function main() {
     const usersURI = `${apiLink}/users`;
     const refURI = `${apiLink}/referral-links`;
 
-    contract.on("Rewarded", (account, input, output, amount, quantity, event) => {
+    contract.on("Rewarded", async (account, input, output, amount, quantity, event) => {
         if (input == vorpalAddress || output == vorpalAddress) {
             console.log('Vorpal Detected');
+            console.log(account, input, output, amount, quantity)
             try {
                 let receiver = await(await axios.get(`${usersURI}/find-by-address/${account}`)).data.user;
+                console.log(receiver);
                 const refLink = await(await axios.get(`${refURI}/${receiver.referrer}`)).data.refLinks;
+                console.log(refLink);
                 let creator = await(await axios.get(`${usersURI}/find-by-address/${refLink.creatorAddress}`)).data.user;
+                console.log(creator)
                 let receiverBalance = ethers.BigNumber.from(receiver.balance);
                 receiverBalance = receiverBalance.add(quantity.div(100).mul(swapPercentage).div(100).mul(refLink.referralPercent));
                 receiver.balance = receiverBalance.toString();
